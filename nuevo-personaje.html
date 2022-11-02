@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <form>
+            <div class="mt-3">
+                <label class="form-label">Nombre:</label><br/>
+                <input type="text" id="nombre" class="form-control"/>
+            </div>
+            <div class="mt-3">
+                <label class="form-label">Imagen:</label><br/>
+                <input type="text" id="imagen" class="form-control"/>
+            </div>
+            <div class="mt-3">
+                <label>Selecciona la serie:</label><br/>
+                <select class="form-select" id="selectserie">
+
+                </select>
+            </div>
+            <button class="btn btn-success mt-3" onclick="crearPersonaje()" type="button">Crear nuevo personaje</button>
+        </form>
+    </div>
+</body>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-3.6.1.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#menu").load("menu.html"); 
+        cargarSeries();       
+    })
+
+    function cargarSeries(){
+        var request = url + "api/series";
+
+        $.getJSON(request, function(data){
+            var html = "";
+            $.each(data, function(index, serie){
+                html += 
+                `
+                <option value="${serie.idSerie}">${serie.nombre}</option>
+                `
+            })
+            $("#selectserie").html(html);
+        });
+    }
+
+    function crearPersonaje (){
+        var nombre = $("#nombre").val();
+        var imagen = $("#imagen").val();
+        var serie = parseInt($("#selectserie").val());
+
+        var personaje = new Object();
+        personaje.idPersonaje = 0;
+        personaje.nombre = nombre;
+        personaje.imagen = imagen;
+        personaje.idSerie = serie;
+        json = JSON.stringify(personaje);
+
+        $.ajax({
+            url: url + "api/personajes/",
+            method: "POST",
+            contentType: "application/json",
+            data: json,
+            success: function(data){
+                window.location.href = "personajes.html?id=" + serie
+            },
+            error: function(error){
+
+            }
+        })
+    }
+</script>
+</html>

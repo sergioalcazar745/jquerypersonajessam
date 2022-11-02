@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <div class="card" style="width: 18rem;">        
+            <div class="card-body" id="cuerpo"></div>
+        </div>
+    </div>
+</body>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-3.6.1.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#menu").load("menu.html")
+        var params = new URLSearchParams(window.location.search);
+        cargarSerie(params.get("id"));
+    })
+
+    function cargarSerie(id){
+        var request = url + "api/series/" + id;
+        $.getJSON(request, function(serie) {
+        var html = 
+            `
+            <img src="${serie.imagen}" class="card-img-top" alt="...">
+            <h5 class="card-title">${serie.nombre}</h5>
+            <p class="card-text">IMBD: ${serie.puntuacion}</p>
+            <a href="personajes.html?id=${serie.idSerie}" class="btn btn-success">Personajes</a>
+        `;        
+        $("#cuerpo").html(html)
+      })
+    }
+
+</script>
+</html>

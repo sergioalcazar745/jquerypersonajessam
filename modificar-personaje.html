@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <form>
+            <div class="mt-3">
+                <label>Selecciona la serie:</label><br/>
+                <select class="form-select" id="selectserie" onchange="changeSerie()">
+
+                </select>
+            </div>
+            <div class="mt-3">
+                <label>Selecciona el personaje:</label><br/>
+                <select class="form-select" id="selectpersonajes" onchange="changePersonaje()">
+
+                </select>
+            </div>
+            <button class="btn btn-success mt-3" onclick="modificarPersonaje()" type="button">Modificar personaje</button>
+        </form>
+        <hr/>
+        <div id="personaje">
+
+        </div>
+        <div id="serie">
+
+        </div>
+    </div>
+</body>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-3.6.1.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+
+    var series = [];
+    var personajes = []
+
+    $(document).ready(function(){
+        $("#menu").load("menu.html");
+        cargarSeries();
+        cargarPersonajes();
+    })
+
+    function cargarSeries(){
+        var request = url + "api/series";
+
+        $.getJSON(request, function(data){
+            var html = "";
+            series = data;
+
+            $.each(data, function(index, serie){
+                html += 
+                `
+                <option value="${parseInt(serie.idSerie)}">${serie.nombre}</option>
+                `
+            })
+            $("#selectserie").html(html);
+        });
+    }
+
+    function cargarPersonajes(){
+        var request = url + "api/personajes";
+
+        $.getJSON(request, function(data){
+            var html = "";
+            personajes = data;
+
+            $.each(data, function(index, personaje){
+                html += 
+                `
+                <option value="${parseInt(personaje.idPersonaje)}">${personaje.nombre}</option>
+                `
+            })
+            $("#selectpersonajes").html(html);
+        });
+    }
+
+    function changeSerie(){
+        //var serie = series[parseInt($("#selectserie").val())];
+        var serie = getSerie(parseInt($("#selectserie").val()))
+        console.log(serie)
+        $("#serie").empty();
+        var html = 
+        `
+        <h1 style="color: 'red'">${serie.nombre}</h1>
+        <img src="${serie.imagen}" alt="imagen" width="150px"/>
+        `
+        $("#serie").html(html)
+    }
+
+    function changePersonaje(){
+        //var personaje = personajes[parseInt($("#selectpersonajes").val())];
+        var personaje = getPersonaje(parseInt($("#selectpersonajes").val()))
+        console.log(personaje)
+        $("#personaje").empty();
+        var html = 
+        `
+        <h1 style="color: 'red'">${personaje.nombre}</h1>
+        <img src="${personaje.imagen}" alt="imagen" width="150px"/>
+        `
+        $("#personaje").html(html);
+    }
+
+    function modificarPersonaje() {
+        var personaje = getPersonaje(parseInt($("#selectpersonajes").val()))
+        var serie = getSerie(parseInt($("#selectserie").val()))
+
+        console.log(personaje)
+        console.log(serie)
+
+        var personajeObject = new Object();
+        personajeObject.idPersonaje = personaje.idPersonaje;
+        personajeObject.nombre = personaje.nombre;
+        personajeObject.imagen = personaje.imagen;
+        personajeObject.idSerie = parseInt(serie.idSerie);
+        var json = JSON.stringify(personajeObject)
+
+        console.log(json)
+
+        $.ajax({
+            url: url + "api/personajes/",
+            method: "PUT",
+            contentType: "application/json",
+            data: json,
+            success: function(data){
+                console.log(data)
+                window.location.href = "personajes.html?id=" + serie.idSerie
+            },
+            error: function(error){
+
+            }
+        })
+    }
+
+    function getPersonaje(id){
+        for (var personaje of personajes) {
+            if(personaje.idPersonaje == id){
+                return personaje
+            }
+        }
+    }
+
+    function getSerie(id){
+        for (var serie of series) {
+            if(serie.idSerie == id){
+                return serie
+            }
+        }
+    }
+
+</script>
+</html>

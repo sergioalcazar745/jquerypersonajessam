@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="menu"></div>
+    <div class="container">
+        <table class="table table-dark" id="tabla">
+            <thead>
+              <tr>
+                <th scope="col">Personaje</th>
+                <th scope="col">Imagen</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div id="enlace"></div>          
+    </div>
+</body>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-3.6.1.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#menu").load("menu.html")
+        var params = new URLSearchParams(window.location.search);
+        cargarPersonajes(params.get("id"));
+    })
+
+    function cargarPersonajes(id){
+        var request = url + "api/Series/PersonajesSerie/" + id;
+
+        $.getJSON(request, function(data){
+            var html = ""
+            $.each(data, function(index, personaje) {
+                html += 
+                `
+                <tr>
+                    <td>${personaje.nombre}</td>
+                    <td><img src="${personaje.imagen}" alt="imagen" width="150px"/></td>
+                </tr>
+                `
+            });
+            $("#tabla tbody").html(html)
+            $("#enlace").html(`<a class='btn btn-danger' href='serie.html?id=${id}'>Volver</a>`)
+        });
+    }
+</script>
+</html>
