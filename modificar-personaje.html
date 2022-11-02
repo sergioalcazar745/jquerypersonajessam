@@ -10,6 +10,7 @@
 <body>
     <div id="menu"></div>
     <div class="container">
+        <h1 class='mt-3'>Modificar personaje</h1>
         <form>
             <div class="mt-3">
                 <label>Selecciona la serie:</label><br/>
@@ -83,9 +84,7 @@
     }
 
     function changeSerie(){
-        //var serie = series[parseInt($("#selectserie").val())];
         var serie = getSerie(parseInt($("#selectserie").val()))
-        console.log(serie)
         $("#serie").empty();
         var html = 
         `
@@ -96,9 +95,7 @@
     }
 
     function changePersonaje(){
-        //var personaje = personajes[parseInt($("#selectpersonajes").val())];
         var personaje = getPersonaje(parseInt($("#selectpersonajes").val()))
-        console.log(personaje)
         $("#personaje").empty();
         var html = 
         `
@@ -112,9 +109,6 @@
         var personaje = getPersonaje(parseInt($("#selectpersonajes").val()))
         var serie = getSerie(parseInt($("#selectserie").val()))
 
-        console.log(personaje)
-        console.log(serie)
-
         var personajeObject = new Object();
         personajeObject.idPersonaje = personaje.idPersonaje;
         personajeObject.nombre = personaje.nombre;
@@ -122,15 +116,12 @@
         personajeObject.idSerie = parseInt(serie.idSerie);
         var json = JSON.stringify(personajeObject)
 
-        console.log(json)
-
         $.ajax({
             url: url + "api/personajes/",
             method: "PUT",
             contentType: "application/json",
             data: json,
             success: function(data){
-                console.log(data)
                 window.location.href = "personajes.html?id=" + serie.idSerie
             },
             error: function(error){
